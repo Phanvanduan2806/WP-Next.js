@@ -30,6 +30,7 @@ services:
       PMA_HOST: db
       PMA_USER: root
       PMA_PASSWORD: password
+      UPLOAD_LIMIT: 64M
 
   # ========================================
   # WordPress
