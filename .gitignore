@@ -49,7 +49,7 @@ wp/**/*debug.log
 /fe/.pnpm-debug.log*
 
 # env files
-/fe/.env*
+# /fe/.env*
 
 # vercel
 /fe/.vercel

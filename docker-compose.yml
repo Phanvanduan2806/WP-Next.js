@@ -62,19 +62,23 @@ services:
     image: node:22-alpine
     restart: always
     working_dir: /app
+
     volumes:
+      # Source code + node_modules + .next đều nằm trên máy Mac
       - ./fe:/app
-      - next_node_modules:/app/node_modules
+
     ports:
       - "2010:3000"
+
     environment:
       NODE_ENV: development
       WATCHPACK_POLLING: "true"
+
     command: sh -c "npm install && npm run dev -- --hostname 0.0.0.0"
+
 
 # ========================================
 # Volumes
 # ========================================
 volumes:
   mysql:
-  next_node_modules:
