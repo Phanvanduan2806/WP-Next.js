@@ -30,7 +30,7 @@ export default function Menu({
   }
 
   return (
-    <nav>
+    <nav aria-label="Main navigation">
       <ul
         className={
           mobile

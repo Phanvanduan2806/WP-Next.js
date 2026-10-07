@@ -20,10 +20,14 @@ export function useMenu() {
           url: getNextUrl(item.url),
         }));
 
-        setMenu(normalizedMenu);
+        setMenu(buildMenuTree(normalizedMenu));
       })
       .catch((error) => {
-        setError(error.message);
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Không thể lấy menu"
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -38,6 +42,10 @@ export function useMenu() {
 }
 
 function getNextUrl(url: string) {
+  if (!url || url === "#") {
+    return "#";
+  }
+
   try {
     const parsedUrl = new URL(url);
 
@@ -45,6 +53,40 @@ function getNextUrl(url: string) {
       ? "/"
       : parsedUrl.pathname + parsedUrl.search;
   } catch {
-    return "/";
+    return url.startsWith("/") ? url : "/";
   }
+}
+
+function buildMenuTree(items: MenuItem[]): MenuItem[] {
+  const map = new Map<number, MenuItem>();
+
+  items.forEach((item) => {
+    map.set(item.id, {
+      ...item,
+      children: [],
+    });
+  });
+
+  const tree: MenuItem[] = [];
+
+  items.forEach((item) => {
+    const current = map.get(item.id);
+
+    if (!current) {
+      return;
+    }
+
+    if (item.parent === 0) {
+      tree.push(current);
+      return;
+    }
+
+    const parent = map.get(item.parent);
+
+    if (parent) {
+      parent.children?.push(current);
+    }
+  });
+
+  return tree;
 }

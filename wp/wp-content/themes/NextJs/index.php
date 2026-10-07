@@ -9,18 +9,14 @@
 
 <body <?php body_class(); ?>>
 
-    <main style="max-width: 900px; margin: 80px auto; padding: 20px; font-family: Arial, sans-serif;">
-        <h1>Next.Js WP</h1>
-
-        <p>
-            WordPress is running as a Headless CMS.
-        </p>
-
-        <p>
-            Frontend:
-            <strong>Next.js</strong>
-        </p>
-    </main>
+    <?php
+    if ( have_posts() ) :
+        while ( have_posts() ) :
+            the_post();
+            the_content();
+        endwhile;
+    endif;
+    ?>
 
     <?php wp_footer(); ?>
 

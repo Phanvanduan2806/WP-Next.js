@@ -2,8 +2,11 @@ export interface MenuItem {
   id: number;
   title: string;
   url: string;
+  icon: string | null;
   parent: number;
+  depth: number;
   order: number;
+  children?: MenuItem[];
 }
 
 export interface MenuResponse {
