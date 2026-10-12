@@ -2,25 +2,52 @@
 
 import useSWR from "swr";
 
-import {
-  getPage,
-  type PageItem,
-} from "@/services/page.service";
+import { getPage, getPages } from "@/services/client/page.service";
+import type { PageItem } from "@/services/types/page";
 
-const fetcher = async (slug: string): Promise<PageItem> => {
-  const response = await getPage(slug);
+interface UsePagesData {
+  pages: PageItem[];
+}
 
-  return response.data;
-};
+export function usePages() {
+  const { data, error, isLoading } =
+    useSWR<UsePagesData>(
+      "pages",
+      async () => {
+        const response = await getPages();
 
-export function usePage(slug: string) {
-  const { data, error, isLoading } = useSWR(
-    slug ? `page:${slug}` : null,
-    () => fetcher(slug),
-  );
+        return {
+          pages: response.data,
+        };
+      },
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+      },
+    );
 
   return {
-    page: data ?? null,
+    pages: data?.pages ?? [],
+    loading: isLoading,
+    error: error?.message ?? null,
+  };
+}
+
+export function usePage(slug: string) {
+  const { data, error, isLoading } =
+    useSWR(
+      slug ? `page:${slug}` : null,
+      () => getPage(slug),
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+      },
+    );
+
+  return {
+    page: data?.data ?? null,
     loading: isLoading,
     error: error?.message ?? null,
   };

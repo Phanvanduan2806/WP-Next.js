@@ -1,46 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { wpNextjsApi } from "@/lib/wp-nextjs-api";
 
-import { WORDPRESS_API_URL } from "@/lib/api";
-
-interface RouteContext {
-  params: Promise<{
-    slug: string;
-  }>;
-}
+type RouteContext = {
+  params: Promise<{ slug: string }>;
+};
 
 export async function GET(
-  _request: Request,
+  request: NextRequest,
   { params }: RouteContext,
 ) {
-  try {
-    const { slug } = await params;
+  const { slug } = await params;
 
-    const response = await fetch(
-      `${WORDPRESS_API_URL}/pages/${encodeURIComponent(slug)}`,
-      {
-        next: {
-          revalidate: 60,
-        },
-      },
-    );
-
-    const data = await response.json();
-
-    return NextResponse.json(data, {
-      status: response.status,
-    });
-  } catch (error) {
-    console.error("PAGE ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Server lỗi",
-        data: null,
-      },
-      {
-        status: 500,
-      },
-    );
-  }
+  return wpNextjsApi(
+    request,
+    `/pages/${encodeURIComponent(slug)}`,
+    {
+      auth: "public",
+      forwardQuery: false,
+      revalidate: 60,
+    },
+  );
 }

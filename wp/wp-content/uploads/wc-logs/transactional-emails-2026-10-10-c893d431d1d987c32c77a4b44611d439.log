@@ -1,0 +1,9 @@
+2026-10-10T11:55:48+00:00 WARNING Email "admin_payment_gateway_enabled" failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"admin_payment_gateway_enabled","status":"failed","recipient":"code","WC_payOS_Payment_Gateway":null}
+2026-10-10T12:00:12+00:00 WARNING Email "new_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"new_order","status":"failed","recipient":"code","order":65}
+2026-10-10T12:00:12+00:00 WARNING Email "customer_on_hold_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"customer_on_hold_order","status":"failed","recipient":"code","order":65}
+2026-10-10T12:18:28+00:00 WARNING Email "new_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"new_order","status":"failed","recipient":"code","order":65}
+2026-10-10T12:18:28+00:00 WARNING Email "customer_on_hold_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"customer_on_hold_order","status":"failed","recipient":"code","order":65}
+2026-10-10T18:35:50+00:00 WARNING Email "new_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"new_order","status":"failed","recipient":"code","order":65}
+2026-10-10T18:35:50+00:00 WARNING Email "customer_on_hold_order" for order #65 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"customer_on_hold_order","status":"failed","recipient":"code","order":65}
+2026-10-10T19:25:01+00:00 WARNING Email "new_order" for order #67 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"new_order","status":"failed","recipient":"code","order":67}
+2026-10-10T19:25:01+00:00 WARNING Email "customer_on_hold_order" for order #67 failed to send: Không thể khởi tạo hàm thư. CONTEXT: {"email_type":"customer_on_hold_order","status":"failed","recipient":"code","order":67}

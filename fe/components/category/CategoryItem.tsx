@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import type { Category } from "@/services/category.service";
+import type { CategoryItem as CategoryItemType } from "@/services/types/category";
 
 interface CategoryItemProps {
-  category: Category;
+  category: CategoryItemType;
 }
 
 export default function CategoryItem({

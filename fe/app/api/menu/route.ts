@@ -1,20 +1,10 @@
-import { NextResponse } from "next/server";
-import { WORDPRESS_API_URL } from "@/lib/api";
+import { NextRequest } from "next/server";
+import { wpNextjsApi } from "@/lib/wp-nextjs-api";
 
-export async function GET() {
-  try {
-    const res = await fetch(`${WORDPRESS_API_URL}/menu`, {
-      next: {
-        revalidate: 60,
-      },
-    });
-
-    return NextResponse.json(await res.json(), {
-      status: res.status,
-    });
-  } catch (error) {
-    console.error("MENU ERROR:", error);
-
-    return NextResponse.json({ message: "Server lỗi" }, { status: 500 });
-  }
+export async function GET(request: NextRequest) {
+  return wpNextjsApi(request, "/menu", {
+    auth: "public",
+    forwardQuery: false,
+    revalidate: 60,
+  });
 }

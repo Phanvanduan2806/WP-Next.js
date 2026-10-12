@@ -9,7 +9,7 @@ export default function LatestPostsSection() {
     posts,
     loading,
     error,
-  } = usePosts(1, 5);
+  } = usePosts(1);
 
   return (
     <section>
@@ -31,6 +31,7 @@ export default function LatestPostsSection() {
               className="animate-pulse rounded-lg border p-4"
             >
               <div className="h-4 w-3/4 rounded bg-muted" />
+
               <div className="mt-3 h-3 w-1/2 rounded bg-muted" />
             </div>
           ))}
@@ -53,7 +54,7 @@ export default function LatestPostsSection() {
               className="group border-b pb-4 last:border-b-0"
             >
               <Link
-                href={`/posts/${post.slug}`}
+                href={`/${post.slug}`}
                 className="block"
               >
                 <h3 className="font-medium leading-snug transition-colors group-hover:text-primary">
@@ -61,7 +62,9 @@ export default function LatestPostsSection() {
                 </h3>
 
                 <div className="mt-2 text-sm text-muted-foreground">
-                  {new Date(post.date).toLocaleDateString("vi-VN")}
+                  {new Date(
+                    post.date,
+                  ).toLocaleDateString("vi-VN")}
                 </div>
               </Link>
             </article>

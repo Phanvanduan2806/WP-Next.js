@@ -32,27 +32,35 @@ export default function CategorySidebar() {
     );
   }
 
+  if (!categories.length) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Chưa có chuyên mục nào.
+      </p>
+    );
+  }
+
   return (
     <div className="space-y-3">
-      {categories.map((item) => (
+      {categories.map((category) => (
         <Link
-          key={item.id}
-          href={`/category/${item.slug}`}
+          key={category.id}
+          href={`/category/${category.slug}`}
           className="block rounded-lg border p-4 transition-colors hover:bg-muted"
         >
           <div className="flex items-center justify-between gap-4">
             <h3 className="font-semibold">
-              {item.name}
+              {category.name}
             </h3>
 
             <span className="shrink-0 text-sm text-muted-foreground">
-              {item.count} Bài viết
+              {category.count} bài viết
             </span>
           </div>
 
-          {item.description && (
+          {category.description && (
             <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-              {item.description}
+              {category.description}
             </p>
           )}
         </Link>

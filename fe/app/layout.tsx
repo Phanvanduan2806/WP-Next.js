@@ -6,7 +6,7 @@ import Footer from "@/components/layout/Footer";
 import SWRProvider from "@/components/providers/SWRProvider";
 
 import { WORDPRESS_API_URL } from "@/lib/api";
-
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -100,6 +100,7 @@ export default function RootLayout({
 
           <main className="flex-1">
             {children}
+            <Toaster position="top-right" richColors />
           </main>
 
           <Footer />

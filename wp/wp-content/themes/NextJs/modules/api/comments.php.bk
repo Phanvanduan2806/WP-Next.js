@@ -1,0 +1,148 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+add_action('rest_api_init', function () {
+    register_rest_route('nextjs/v1', '/comments', [
+        [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => 'nextjs_get_comments',
+            'permission_callback' => '__return_true',
+            'args' => [
+                'post_id' => [
+                    'required' => true,
+                    'sanitize_callback' => 'absint',
+                    'validate_callback' => function ($value) {
+                        return is_numeric($value) && (int) $value > 0;
+                    },
+                ],
+            ],
+        ],
+        [
+            'methods' => WP_REST_Server::CREATABLE,
+            'callback' => 'nextjs_create_comment',
+            'permission_callback' => 'nextjs_api_require_user',
+        ],
+    ]);
+});
+
+function nextjs_get_comments(WP_REST_Request $request)
+{
+    $post_id = absint($request->get_param('post_id'));
+    $post = get_post($post_id);
+
+    if (!$post || $post->post_status !== 'publish') {
+        return nextjs_api_error(
+            'post_not_found',
+            'Không tìm thấy bài viết.',
+            404
+        );
+    }
+
+    $comments = get_comments([
+        'post_id' => $post_id,
+        'status' => 'approve',
+        'type' => 'comment',
+        'orderby' => 'comment_date_gmt',
+        'order' => 'ASC',
+        'number' => 100,
+    ]);
+
+    $items = [];
+
+    foreach ($comments as $comment) {
+        $items[] = [
+            'id' => (int) $comment->comment_ID,
+            'post_id' => (int) $comment->comment_post_ID,
+            'author' => $comment->comment_author,
+            'content' => $comment->comment_content,
+            'date' => $comment->comment_date_gmt,
+            'avatar' => get_avatar_url(
+                $comment->user_id ?: $comment->comment_author_email
+            ),
+        ];
+    }
+
+    return rest_ensure_response([
+        'success' => true,
+        'items' => $items,
+        'total' => count($items),
+    ]);
+}
+
+function nextjs_create_comment(WP_REST_Request $request)
+{
+    $user = nextjs_api_current_user($request);
+    $body = nextjs_api_body($request);
+
+    $post_id = absint($body['post_id'] ?? 0);
+    $content = isset($body['content']) && is_string($body['content'])
+        ? trim(wp_strip_all_tags($body['content']))
+        : '';
+
+    $post = get_post($post_id);
+
+    if (!$post || $post->post_status !== 'publish') {
+        return nextjs_api_error(
+            'invalid_post',
+            'Bài viết không hợp lệ.',
+            400
+        );
+    }
+
+    if ($content === '' || mb_strlen($content) > 5000) {
+        return nextjs_api_error(
+            'invalid_comment',
+            'Nội dung bình luận phải từ 1 đến 5000 ký tự.',
+            400
+        );
+    }
+
+    if (
+        !comments_open($post_id) ||
+        !post_type_supports($post->post_type, 'comments')
+    ) {
+        return nextjs_api_error(
+            'comments_closed',
+            'Bài viết hiện không nhận bình luận.',
+            403
+        );
+    }
+
+    $comment_id = wp_new_comment([
+        'comment_post_ID' => $post_id,
+        'comment_content' => $content,
+        'user_id' => (int) $user->ID,
+        'comment_author' => $user->display_name,
+        'comment_author_email' => $user->user_email,
+        'comment_author_url' => '',
+        'comment_type' => 'comment',
+    ], true);
+
+    if (is_wp_error($comment_id)) {
+        return nextjs_api_error(
+            'comment_failed',
+            'Không thể gửi bình luận.',
+            400
+        );
+    }
+
+    $comment = get_comment($comment_id);
+
+    return new WP_REST_Response([
+        'success' => true,
+        'message' => $comment->comment_approved === '1'
+            ? 'Bình luận đã được đăng.'
+            : 'Bình luận đã gửi và đang chờ duyệt.',
+        'item' => [
+            'id' => (int) $comment->comment_ID,
+            'post_id' => (int) $comment->comment_post_ID,
+            'content' => $comment->comment_content,
+            'status' => $comment->comment_approved === '1'
+                ? 'approved'
+                : 'pending',
+        ],
+    ], 201);
+}

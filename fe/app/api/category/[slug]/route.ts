@@ -1,43 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { wpNextjsApi } from "@/lib/wp-nextjs-api";
 
-import { WORDPRESS_API_URL } from "@/lib/api";
+type RouteContext = {
+  params: Promise<{ slug: string }>;
+};
 
-interface RouteProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
+export async function GET(
+  request: NextRequest,
+  { params }: RouteContext,
+) {
+  const { slug } = await params;
 
-export async function GET(request: Request, { params }: RouteProps) {
-  try {
-    const { slug } = await params;
-
-    const response = await fetch(
-      `${WORDPRESS_API_URL}/category/${encodeURIComponent(slug)}`,
-      {
-        next: {
-          revalidate: 60,
-        },
-      },
-    );
-
-    const data = await response.json();
-
-    return NextResponse.json(data, {
-      status: response.status,
-    });
-  } catch (error) {
-    console.error("CATEGORY ERROR:", error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Server lỗi",
-        data: null,
-      },
-      {
-        status: 500,
-      },
-    );
-  }
+  return wpNextjsApi(
+    request,
+    `/category/${encodeURIComponent(slug)}`,
+    {
+      auth: "public",
+      forwardQuery: false,
+      revalidate: 60,
+    },
+  );
 }

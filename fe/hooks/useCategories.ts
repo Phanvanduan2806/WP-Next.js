@@ -2,27 +2,33 @@
 
 import useSWR from "swr";
 
-import {
-  getCategories,
-  type Category,
-} from "@/services/category.service";
+import { getCategories } from "@/services/client/category.service";
+import type { CategoryItem } from "@/services/types/category";
+
+interface UseCategoriesData {
+  categories: CategoryItem[];
+}
 
 export function useCategories() {
-  const { data, error, isLoading } = useSWR<Category[]>(
-    "categories",
-    async () => {
-      const response = await getCategories();
+  const { data, error, isLoading } =
+    useSWR<UseCategoriesData>(
+      "categories",
+      async () => {
+        const response = await getCategories();
 
-      if (!response.success) {
-        throw new Error("Không thể lấy categories");
-      }
-
-      return response.data;
-    },
-  );
+        return {
+          categories: response.data,
+        };
+      },
+      {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        revalidateIfStale: false,
+      },
+    );
 
   return {
-    categories: data ?? [],
+    categories: data?.categories ?? [],
     loading: isLoading,
     error: error?.message ?? null,
   };

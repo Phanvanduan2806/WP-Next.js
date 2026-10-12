@@ -1,48 +1,22 @@
-"use client";
-
-import { usePage } from "@/hooks/usePages";
 import Breadcrumb from "../layout/Breadcrumb";
+import Container from "../layout/Container";
+
+import type { PageItem } from "@/services/types/page";
 
 interface PageContentProps {
-  slug: string;
+  page: PageItem;
 }
 
-export default function PageContent({ slug }: PageContentProps) {
-  const { page, loading, error } = usePage(slug);
-
-  if (loading) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-20">
-        <p className="text-muted-foreground">Loading...</p>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-20">
-        <p className="text-destructive">{error}</p>
-      </main>
-    );
-  }
-
-  if (!page) {
-    return (
-      <main className="container mx-auto px-4 pt-6 md:px-6">
-        <p className="text-muted-foreground">
-          Không tìm thấy trang.
-        </p>
-      </main>
-    );
-  }
-
+export default function PageDefault({
+  page,
+}: PageContentProps) {
   return (
-    <main>
+    <Container>
       <header className="border-b">
-        <div className="mx-auto max-w-7xl px-6 py-16">
+        <div className="mx-auto py-10">
           <Breadcrumb />
 
-          <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
             {page.title}
           </h1>
         </div>
@@ -56,6 +30,6 @@ export default function PageContent({ slug }: PageContentProps) {
           }}
         />
       </section>
-    </main>
+    </Container>
   );
 }

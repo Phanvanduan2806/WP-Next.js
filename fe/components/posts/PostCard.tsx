@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import type { PostItem } from "@/services/post.service";
+import type { PostItem } from "@/services/types/post";
 
 interface PostCardProps {
   post: PostItem;
@@ -14,7 +14,7 @@ export default function PostCard({
     <article className="group overflow-hidden rounded-xl border bg-card">
       {post.featured_image && (
         <Link
-          href={`/posts/${post.slug}`}
+          href={`/${post.slug}`}
           className="block overflow-hidden"
         >
           <Image
@@ -44,7 +44,7 @@ export default function PostCard({
 
         <h2 className="text-xl font-semibold tracking-tight">
           <Link
-            href={`/posts/${post.slug}`}
+            href={`/${post.slug}`}
             className="transition-colors hover:text-primary"
           >
             {post.title}
